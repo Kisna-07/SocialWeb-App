@@ -131,6 +131,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 STATIC_URL = 'static/'
 
 # Default primary key field type
@@ -157,7 +159,7 @@ AUTHENTICATION_BACKENDS = [
     'social_core.backends.google.GoogleOAuth2',
 ]
 
-ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1','fd91-117-99-242-13.ngrok.io','.herokuapp.com']
+ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1','fd91-117-99-242-13.ngrok.io','socialweb3.herokuapp.com']
 
 SOCIAL_AUTH_FACEBOOK_KEY = '630610564814088' # Facebook App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = '5bb2075abb8ee8d97feffcfa57281f42' # Facebook App Secret
