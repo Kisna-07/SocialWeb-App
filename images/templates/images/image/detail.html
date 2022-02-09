@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}{{ image.title }}{% endblock %}
+{% block content %}
+<h2 class="text-center text-body">{{ image.title }}</h2>
+<div class="text-center">
+    {% load thumbnail %}
+    {% thumbnail image.image "300" as im %}
+    <a href="{{ image.image.url }}">
+    <img src="{{ im.url }}" class="image-detail">
+    </a>
+    {% endthumbnail %}
+</div>
+{% with total_likes=image.users_like.count users_like=image.users_like.all %}
+<div class="image-info">
+    <div class="btn btn-warning btn-sm">
+        <span class="count">
+            {{ total_views }} view{{ total_views|pluralize }}
+        </span>
+    <span class="total">{{ total_likes }}</span>
+    like{{ total_likes|pluralize }}
+    <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in users_like %}un{% endif %}like"
+    class="like button">
+    {% if request.user not in users_like %}
+    Like
+    {% else %}
+    Unlike
+    {% endif %}
+    </a>
+    </div>
+    <div class="text-center">
+        {{ image.description|linebreaks }}
+    </div>
+    </div>
+<div class="image-likes">
+    {% for user in image.users_like.all %}
+    <div class="text-center">
+        <img src="{{ user.profile.photo.url }}" class="w-25 p-1" style="background-color: rgb(177, 178, 179);">
+        <p class="h3">{{ user.first_name }}</p>
+    </div>
+    {% empty %}
+    Nobody likes this image yet.
+    {% endfor %}
+</div>
+{% endwith %}
+{% endblock %}
+
+{% block domready %}
+$('a.like').click(function (e) {
+    e.preventDefault();
+    $.post('{% url "images:like" %}',
+        {
+            id: $(this).data('id'),
+            action: $(this).data('action')
+        },
+        function (data) {
+            if (data['status'] == 'ok') {
+                var previous_action = $('a.like').data('action');
+                // toggle data-action
+                $('a.like').data('action', previous_action == 'like' ?
+                    'unlike' : 'like');
+                // toggle link text
+                $('a.like').text(previous_action == 'like' ? 'Unlike' :
+                    'Like');
+                // update total likes
+                var previous_likes = parseInt($('span.count .total').text());
+                $('span.count .total').text(previous_action == 'like' ?
+                    previous_likes + 1 : previous_likes - 1);
+            }
+        }
+    );
+});
+{% endblock %}

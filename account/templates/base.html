@@ -1,0 +1,94 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-light" style="background-color: #b8d7ee;">
+        <a class="navbar-brand" href="#">
+            <img src="https://w1.pngwing.com/pngs/150/80/png-transparent-bookmark-blue-hatena-reddit-text-logo-line-area-rectangle-thumbnail.png"
+                width="30" height="30" class="d-inline-block align-top" alt="">
+            Bookmarks
+        </a>
+        {% if request.user.is_authenticated %}
+        <ul class='nav'>
+            <li class="nav-item active"{% if section == "dashboard" %}class="selected"{% endif %}>
+            <a class="nav-link active" href="{% url "dashboard" %}">My dashboard</a>
+            </li>
+            <li class="nav-item" {% if section == "images" %}class="selected"{% endif %}>
+            <a class="nav-link" href="{% url "images:list" %}">Images</a>
+            </li>
+            <li  class="nav-item text-dark"{% if section == "people" %}class="selected"{% endif %}>
+            <a class="nav-link" href="{% url "user_list" %}">People</a>
+            </li>
+        </ul>
+                {% endif %}
+                <span class="user">
+                {% if request.user.is_authenticated %}
+                Hello {{ request.user.first_name }},
+                <a href="{% url "logout" %}">Logout</a>
+                {% else %}
+                <a href="{% url "login" %}">Log-in</a>
+                {% endif %}
+                </span>
+                </div>
+    </nav>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <div class="form-group form-control alert alert-dark alert-link" role="alert">
+            <li class="text-center">
+                {{ message|safe }}
+                    <a href="#" class="close">x</a>
+            </li>
+        </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="d-flex justify-content-center">
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script 
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js">
+    </script>
+    <script>
+        var csrftoken = Cookies.get('csrftoken');
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $(document).ready(function(){
+            // {% block domready %}
+            // {% endblock %}
+        });
+    </script>
+
+</body>
+
+</html>
+
+<!-- ---------------------------------------------------------- -->
